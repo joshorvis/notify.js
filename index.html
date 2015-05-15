@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Notification demo</title>
+
+
+
+</head>
+<body>
+
+<button id="my-button">Fire notification</button>
+
+</body>
+<script src="notify.js"></script>
+<script>
+
+	document.getElementById('my-button').addEventListener('click', function () {
+
+		function onShowNotification () {
+			console.log('notification is shown!');
+		}
+
+		function onCloseNotification () {
+			console.log('notification is closed!');
+		}
+
+		function onClickNotification () {
+			console.log('notification was clicked!');
+		}
+
+		function onErrorNotification () {
+			console.error('Error showing notification. You may need to request permission.');
+		}
+
+		function onPermissionGranted () {
+			console.log('Permission has been granted by the user');
+			doNotification({body:'thanks for you permission!'});
+		}
+
+		function onPermissionDenied () {
+			console.warn('Permission has been denied by the user');
+		}
+
+		function doNotification (args) {
+			var noteIcon = args.icon || 'bell.png';
+			var noteBody = args.body || 'Default message';
+			var noteTag = args.tag || 'My default unique id';
+			var noteTitle = args.title || 'Default title';
+
+			var myNotification = new Notify(noteTitle, {
+				icon: noteIcon,
+				body: noteBody,
+				tag: noteTag,
+				notifyShow: onShowNotification,
+				notifyClose: onCloseNotification,
+				notifyClick: onClickNotification,
+				notifyError: onErrorNotification,
+				timeout: 4
+			});
+
+			myNotification.show();
+		}
+
+		if (Notify.needsPermission) {
+			Notify.requestPermission(onPermissionGranted, onPermissionDenied);
+		} else {
+			doNotification({body:'I already had permission'});
+		}
+
+	}, false);
+</script>
+</html>
